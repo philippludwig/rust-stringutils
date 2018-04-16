@@ -1,0 +1,6 @@
+[package]
+name = "stringutils"
+version = "0.1.0"
+authors = ["Philipp Ludwig <git@philippludwig.net>"]
+
+[dependencies]
