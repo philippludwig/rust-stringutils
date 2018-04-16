@@ -1,6 +1,10 @@
 [package]
 name = "stringutils"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Philipp Ludwig <git@philippludwig.net>"]
+license = "MIT"
+description = "A collection of various and (hopefully) useful String utility functions."
+repository = "https://github.com/philippludwig/rust-stringutils.git"
+categories = ["text-processing"]
 
 [dependencies]
