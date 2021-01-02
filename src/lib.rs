@@ -1,5 +1,10 @@
 use std::fmt::Write;
 
+extern "C" {
+	fn strftime(s: *mut libc::c_char, max: libc::size_t, format: *const libc::c_char, tm: *const libc::tm)
+		-> usize;
+}
+
 /// Convert a byte array to a ``String``.
 ///
 /// # Examples
@@ -18,6 +23,26 @@ pub fn byte_array_to_string(bytes: &[u8]) -> String {
 	repr
 }
 
+/// Get a String representation for a timestamp.
+///
+/// # Example
+/// ```
+/// let current_time = unsafe { libc::time(std::ptr::null_mut()) };
+/// let repr = stringutils::timestamp_to_string(current_time).unwrap();
+/// println!("Current time: {}", repr);
+/// ```
+pub fn timestamp_to_string(timestamp_secs: i64) -> Result<String, std::str::Utf8Error> {
+	let gmtime = unsafe { libc::gmtime(&timestamp_secs) };
+	let mut buf = [0u8; 4096];
+
+	let format_str = "%Y-%m-%d %H:%M";
+	let format_cstr = std::ffi::CString::new(format_str).unwrap();
+
+	let len = unsafe { strftime(buf.as_mut_ptr() as *mut i8, 4096, format_cstr.as_ptr(), gmtime) };
+
+	std::str::from_utf8(&buf[0..len]).map(|s| s.to_owned())
+}
+
 #[cfg(test)]
 mod tests {
 	#[test]
@@ -28,3 +53,4 @@ mod tests {
 		println!("{}", repr);
 	}
 }
+
