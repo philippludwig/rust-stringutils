@@ -1,7 +1,7 @@
 use std::{
 	fmt::Write,
 	os::raw::{c_char}
-;
+};
 
 #[repr(C)] struct tm { _private: u8 }
 
@@ -10,7 +10,7 @@ use std::{
 
 extern "C" {
 	fn gmtime(secs: *const i64) -> *mut tm;
-	fn strftime(s: c_char, max: SizeType, format: *const c_char, tm: *const tm) -> usize;
+	fn strftime(s: *mut c_char, max: SizeType, format: *const c_char, tm: *const tm) -> usize;
 }
 
 /// Convert a byte array to a ``String``.
@@ -46,7 +46,7 @@ pub fn timestamp_to_string(timestamp_secs: i64) -> Result<String, std::str::Utf8
 	let format_str = "%Y-%m-%d %H:%M";
 	let format_cstr = std::ffi::CString::new(format_str).unwrap();
 
-	let len = unsafe { strftime(buf.as_mut_ptr() as *mut i8, 4096, format_cstr.as_ptr(), gmtime) };
+	let len = unsafe { strftime(buf.as_mut_ptr() as *mut c_char, 4096, format_cstr.as_ptr(), gmtime) };
 
 	std::str::from_utf8(&buf[0..len]).map(|s| s.to_owned())
 }
