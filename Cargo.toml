@@ -8,4 +8,3 @@ repository = "https://github.com/philippludwig/rust-stringutils.git"
 categories = ["text-processing"]
 
 [dependencies]
-libc = "0.2.81"

@@ -1,8 +1,16 @@
-use std::fmt::Write;
+use std::{
+	fmt::Write,
+	os::raw::{c_char}
+;
+
+#[repr(C)] struct tm { _private: u8 }
+
+#[cfg(target_pointer_width = "64")] type SizeType = u64;
+#[cfg(target_pointer_width = "32")] type SizeType = u32;
 
 extern "C" {
-	fn strftime(s: *mut libc::c_char, max: libc::size_t, format: *const libc::c_char, tm: *const libc::tm)
-		-> usize;
+	fn gmtime(secs: *const i64) -> *mut tm;
+	fn strftime(s: c_char, max: SizeType, format: *const c_char, tm: *const tm) -> usize;
 }
 
 /// Convert a byte array to a ``String``.
@@ -32,7 +40,7 @@ pub fn byte_array_to_string(bytes: &[u8]) -> String {
 /// println!("Current time: {}", repr);
 /// ```
 pub fn timestamp_to_string(timestamp_secs: i64) -> Result<String, std::str::Utf8Error> {
-	let gmtime = unsafe { libc::gmtime(&timestamp_secs) };
+	let gmtime = unsafe { gmtime(&timestamp_secs) };
 	let mut buf = [0u8; 4096];
 
 	let format_str = "%Y-%m-%d %H:%M";
