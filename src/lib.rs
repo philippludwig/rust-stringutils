@@ -51,14 +51,4 @@ pub fn timestamp_to_string(timestamp_secs: i64) -> Result<String, std::str::Utf8
 	std::str::from_utf8(&buf[0..len]).map(|s| s.to_owned())
 }
 
-#[cfg(test)]
-mod tests {
-	#[test]
-	fn test_ba_to_string() {
-		let byte_array = vec!(0x0au8, 0x20u8, 0x4Fu8);
-		let repr = super::byte_array_to_string(&byte_array);
-		assert_eq!(repr, String::from("0a204f"));
-		println!("{}", repr);
-	}
-}
 
